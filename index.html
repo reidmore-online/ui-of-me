@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<head>
+    <title>UI of Wendy</title>
+    <link href="ui.css" rel="stylesheet" type="text/css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <script type="text/javascript">
+        /*
+        *   This content is licensed according to the W3C Software License at
+        *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+        *
+        *   File:   tabs-manual.js
+        *
+        *   Desc:   Tablist widget that implements ARIA Authoring Practices
+        */
+
+        'use strict';
+
+        class TabsManual {
+        constructor(groupNode) {
+            this.tablistNode = groupNode;
+
+            this.tabs = [];
+
+            this.firstTab = null;
+            this.lastTab = null;
+
+            this.tabs = Array.from(this.tablistNode.querySelectorAll('[role=tab]'));
+            this.tabpanels = [];
+
+            for (var i = 0; i < this.tabs.length; i += 1) {
+            var tab = this.tabs[i];
+            var tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+
+            tab.tabIndex = -1;
+            tab.setAttribute('aria-selected', 'false');
+            this.tabpanels.push(tabpanel);
+
+            tab.addEventListener('keydown', this.onKeydown.bind(this));
+            tab.addEventListener('click', this.onClick.bind(this));
+
+            if (!this.firstTab) {
+                this.firstTab = tab;
+            }
+            this.lastTab = tab;
+            }
+
+            this.setSelectedTab(this.firstTab);
+        }
+
+        setSelectedTab(currentTab) {
+            for (var i = 0; i < this.tabs.length; i += 1) {
+            var tab = this.tabs[i];
+            if (currentTab === tab) {
+                tab.setAttribute('aria-selected', 'true');
+                tab.removeAttribute('tabindex');
+                this.tabpanels[i].classList.remove('is-hidden');
+            } else {
+                tab.setAttribute('aria-selected', 'false');
+                tab.tabIndex = -1;
+                this.tabpanels[i].classList.add('is-hidden');
+            }
+            }
+        }
+
+        moveFocusToTab(currentTab) {
+            currentTab.focus();
+        }
+
+        moveFocusToPreviousTab(currentTab) {
+            var index;
+
+            if (currentTab === this.firstTab) {
+            this.moveFocusToTab(this.lastTab);
+            } else {
+            index = this.tabs.indexOf(currentTab);
+            this.moveFocusToTab(this.tabs[index - 1]);
+            }
+        }
+
+        moveFocusToNextTab(currentTab) {
+            var index;
+
+            if (currentTab === this.lastTab) {
+            this.moveFocusToTab(this.firstTab);
+            } else {
+            index = this.tabs.indexOf(currentTab);
+            this.moveFocusToTab(this.tabs[index + 1]);
+            }
+        }
+
+        /* EVENT HANDLERS */
+
+        onKeydown(event) {
+            var tgt = event.currentTarget,
+            flag = false;
+
+            switch (event.key) {
+            case 'ArrowUp':
+                this.moveFocusToPreviousTab(tgt);
+                flag = true;
+                break;
+            
+            case 'ArrowLeft':
+                this.moveFocusToPreviousTab(tgt);
+                flag = true;
+                break;
+
+            case 'ArrowDown':
+                this.moveFocusToNextTab(tgt);
+                flag = true;
+                break;
+            
+            case 'ArrowRight':
+                this.moveFocusToNextTab(tgt);
+                flag = true;
+                break;
+
+            case 'Home':
+                this.moveFocusToTab(this.firstTab);
+                flag = true;
+                break;
+
+            case 'End':
+                this.moveFocusToTab(this.lastTab);
+                flag = true;
+                break;
+
+            default:
+                break;
+            }
+
+            if (flag) {
+            event.stopPropagation();
+            event.preventDefault();
+            }
+        }
+
+        // Since this example uses buttons for the tabs, the click onr also is activated
+        // with the space and enter keys
+        onClick(event) {
+            this.setSelectedTab(event.currentTarget);
+        }
+        }
+
+        // Initialize tablist
+
+        window.addEventListener('load', function () {
+        var tablists = document.querySelectorAll('[role=tablist].manual');
+        for (var i = 0; i < tablists.length; i++) {
+            new TabsManual(tablists[i]);
+        }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header> </header>
+        <nav>
+            <div class="tabs">
+                <h2 id="tablist-1">Navigation</h2>
+                <div role="tablist" aria-labelledby="tablist-1" class="manual">
+                    <button id="tab-1" type="button" role="tab" aria-selected="true" aria-controls="tabpanel-1">
+                        <span class="focus">Home</span>
+                    </button>
+                    <button id="tab-2" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1">
+                        <span class="focus">Work</span>
+                    </button>
+                    <button id="tab-3" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-3" tabindex="-1">
+                        <span class="focus">School</span>
+                    </button>
+                    <button id="tab-4" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-4" tabindex="-1">
+                        <span class="focus">Outside</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <main>
+            <div class="item section-head">
+                <h1>The UI of Wendy</h1>
+
+                <p>This is my UI.</p>
+            </div>
+            
+            <div class=" item" id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
+                <h2 class="section-head">Home</h2>
+
+                <div class="sub-item" id="cats" tabindex="0">
+                    <h3>Cats</h3>
+                    
+                    <div class="surprise">
+                        <img src="images/cat-face-svgrepo-com.svg" alt="Alfie and Phoebe, sitting on me but being very careful not to touch each other, each one purring softly." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+                <div class="sub-item" id="comfort" tabindex="0">
+                    <h3>Comfort</h3>
+                    
+                    <div class="surprise">
+                        <img src="images/coffee-mug-svgrepo-com.svg" alt="A cup of tea, laughter with friends." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+                <div class="sub-item" id="partner" tabindex="0">
+                    <h3>Partner</h3>
+                    
+                    <div class="surprise">
+                        <img src="images/love-svgrepo-com.svg" alt="Talking with Ben, sharing stories or jokes or exclaiming about how cute one of the cats is being." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+            </div>
+            <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" class="is-hidden item">
+                <h2 class="section-head">Work</h2>
+
+                <div class="sub-item" id="accessibility" tabindex="0">
+                    <h3>Accessibility</h3>
+
+                    <div class="surprise">
+                        <img src="images/accessibility-svgrepo-com.svg" alt="Dreaming of a world without barriers." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+                <div class="sub-item" id="standards" tabindex="0">
+                    <h3>Standards</h3>
+
+                    <div class="surprise">
+                        <img src="images/router-svgrepo-com.svg" alt="eeee rrrr ack ack... working in standards is about as fast as downloading an MP3 in 2003." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+                <div class="sub-item" id="ereading" tabindex="0">
+                    <h3>eReading</h3>
+
+                    <div class="surprise">
+                        <img src="images/ereader-ebook-svgrepo-com.svg" alt="It is a truth universally acknowledged... in pixels not ink." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+            </div>
+            <div id="tabpanel-3" role="tabpanel" aria-labelledby="tab-3" class="is-hidden item">
+                <h2 class="section-head">School</h2>
+
+                <div class="sub-item" id="inclusive-design" tabindex="0">
+                    <h3>Inclusive Design</h3>
+
+                    <div class="surprise">
+                        <img src="images/design-ideas-svgrepo-com.svg" alt="Design with, not for." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+                <div class="sub-item" id="reading" tabindex="0">
+                    <h3>Reading</h3>
+
+                    <div class="surprise">
+                        <img src="images/photo-album-svgrepo-com.svg" alt="It is a truth universally acknowledged..." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+            </div>
+            <div id="tabpanel-4" role="tabpanel" aria-labelledby="tab-4" class="is-hidden item">
+                <h2 class="section-head">The Rest</h2>
+
+                <div class="sub-item" id="outside" tabindex="0">
+                    <h3>Travel</h3>
+
+                    <div class="surprise">
+                        <img src="images/world-map-svgrepo-com.svg" alt="To understand the world, you need to be in it." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+                <div class="sub-item" id="friends" tabindex="0">
+                    <h3>Friends</h3>
+
+                    <div class="surprise">
+                        <img src="images/house-photoshopsupply-shape-2-svgrepo-com.svg" alt="Home is with friends, laughing, eating, when I think of them I think of home." width="60vw" height="60vw"/>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
